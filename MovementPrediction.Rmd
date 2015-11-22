@@ -1,0 +1,69 @@
+---
+title: "Predicting Correct and Incorect Movement Patterns"
+author: "Heidi Joy Guenther"
+date: "November 22, 2015"
+output: html_document
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+                      warning=FALSE, message=FALSE)
+```
+
+This project uses a data set in which 6 people lifted weights while data was taken from Human Activity Recognition (HAR) sensors attached to them. The subjects performed the weight lifting exercises correctly and incorrectly in various ways. The goal of this analysis is to build a predictive model to predict the various correct or incorrect ways the exercise is being performed based on HAR sensors. First the Data were explored, then the predictive features were picked, next a model was fit, and finally the predictions were made for the test data set. In the end Random Forest model had an estimated Out of Sample error of .2% and an accuracy of 99.8% This type of predictive analysis is important because it will be used for HAR sensors that help inform the wearer how to optimize their training techniques during workouts (ie. fitbit).
+
+Load Packages
+```{r}
+library(ggplot2)
+library(caret)
+library(randomForest)
+```
+
+Download Data Set
+```{r, cache = TRUE}
+# dowlnoad train data set
+download.file("http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "pml-training.csv")
+data <- read.csv("pml-training.csv")
+
+# download test data set
+download.file("http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "pml-testing.csv")
+test <- read.csv("pml-testing.csv")
+```
+
+Sparse data into training and validation sets before final test set is used
+```{r}
+# Split train data set for cross validation
+set.seed (1348)
+inTrain <- createDataPartition(y=data$classe,
+                               p=.7, list=FALSE)
+train <- data[inTrain,]
+validation <- data[-inTrain,]
+```
+
+Pick Features
+```{r}
+names(train)
+# first eliminate predictors based on NA values in test data
+feat <- is.na(as.numeric(as.vector(test[1,])))
+train <- train[,!feat]
+validation <- validation[,!feat]
+# Remove other Irrelivant predictors
+train <- train[,2:60] #remove row numbers
+validation <- validation[,2:60]
+train <- train[,-c(5,6)] #remove "window" variables
+validation <- validation[,-c(5,6)]
+```
+
+Create Model
+```{r, cache = TRUE}
+ctrl <- trainControl(method = "cv", repeats = 5)
+rffit <- train(classe ~., data = train, method = "rf", trControl = ctrl)
+rffit
+```
+
+Create prediction for cross validation on "validation" testing set
+```{r}
+pred <- predict(rffit, validation[,-57])
+confusionMatrix(pred, validation[,57])
+```
+
+The expected out of sample error stated by model is .2% based on confusion matrix above (1 - Accuracy). 
