@@ -66,4 +66,11 @@ pred <- predict(rffit, validation[,-57])
 confusionMatrix(pred, validation[,57])
 ```
 
-The expected out of sample error stated by model is .2% based on confusion matrix above (1 - Accuracy). 
+The expected out of sample error stated by model is .2% based on confusion matrix above (1 - Accuracy)
+
+Create final prediction for testing set
+```{r}
+# test set prediction accuracy
+pred.final <- predict(rffit, test)
+as.character(pred.final)
+```

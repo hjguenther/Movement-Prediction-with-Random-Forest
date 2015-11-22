@@ -235,7 +235,13 @@ confusionMatrix(pred, validation[,57])</code></pre>
 ## Detection Rate         0.2845   0.1930   0.1735   0.1636   0.1833
 ## Detection Prevalence   0.2848   0.1934   0.1737   0.1647   0.1835
 ## Balanced Accuracy      0.9998   0.9985   0.9975   0.9989   0.9985</code></pre>
-<p>The expected out of sample error stated by model is .2% based on confusion matrix above (1 - Accuracy).</p>
+<p>The expected out of sample error stated by model is .2% based on confusion matrix above (1 - Accuracy)</p>
+<p>Create final prediction for testing set</p>
+<pre class="r"><code># test set prediction accuracy
+pred.final &lt;- predict(rffit, test)
+as.character(pred.final)</code></pre>
+<pre><code>##  [1] &quot;B&quot; &quot;A&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;E&quot; &quot;D&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;B&quot; &quot;A&quot; &quot;E&quot; &quot;E&quot; &quot;A&quot;
+## [18] &quot;B&quot; &quot;B&quot; &quot;B&quot;</code></pre>
 
 
 </div>
